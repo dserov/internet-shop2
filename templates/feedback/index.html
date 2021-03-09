@@ -1,0 +1,60 @@
+{% include 'header.html' %}
+<span class="error"><?= implode('<br>', $errors) ?></span>
+<h1>Отзывы</h1>
+<table class="tbl_harakteristiki">
+    <tr>
+        <th>Автор</th>
+        <th>Содержимое</th>
+        <th>Добавлен</th>
+        <?php if (isAdmin()) { ?>
+        <th>Действия</th>
+        <?php } ?>
+    </tr>
+    <?php if (!$rows) {
+        echo "<tr><td colspan='3'>Отзывов пока нет!</td></tr>";
+    } else {
+    foreach ($rows as $row) {
+    ?>
+    <tr>
+        <td><?= $row['author'] ?></td>
+        <td><?= $row['text'] ?></td>
+        <td><?= $row['create_date'] ?></td>
+        <?php if (isAdmin()) { ?>
+        <td class="feedback-actions__panel">
+            <form action="?page=feedback" method="post"><input type="hidden" name="id"
+                                                               value="<?= $row['id'] ?>">
+                <button type="submit" name="action" value="delete" title="Удалить отзыв">Удалить</button>&nbsp;
+            </form>
+            <form action="?page=feedback" method="post"><input type="hidden" name="id"
+                                                               value="<?= $row['id'] ?>">
+                <button type="submit" name="action" value="edit" title="Изменить отзыв">Изменить</button>&nbsp;
+            </form>
+        </td>
+        <?php } ?>
+    </tr>
+    <?php
+        }
+    } ?>
+</table>
+<hr>
+<?php if ($feedback['action'] == 'edit') { ?>
+<h2>Редактировать отзыв</h2>
+<?php } else { ?>
+<h2>Новый отзыв</h2>
+<?php } ?>
+<form action="?page=feedback" method="post">
+    <input type="hidden" name="id" value="<?= $feedback['id'] ?>">
+    <div class="input_field"><span>Имя: </span><input type="text" name="author" value="<?= $feedback['author'] ?>"
+                                                      required placeholder="Введите имя"></div>
+    <div class="input_field"><span>Отзыв: </span><textarea name="text" required
+                                                           placeholder="Ваш отзыв"><?= $feedback['text'] ?></textarea>
+    </div>
+    <div class="input_field"><span>&nbsp;</span>
+        <?php if ($feedback['action'] == 'edit') { ?>
+        <button type="submit" name="action" value="update">Обновить отзыв</button>
+        <?php } else { ?>
+        <button type="submit" name="action" value="add">Добавить отзыв</button>
+        <?php } ?>
+    </div>
+</form>
+{% include 'footer.html' %}

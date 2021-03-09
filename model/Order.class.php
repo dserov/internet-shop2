@@ -46,7 +46,7 @@ class Order extends Model {
         if (App::isUser()) {
             $this->orders = DB::getInstance()->QueryMany("SELECT o.*, os.name as status_name, os.description from orders o 
                         inner join order_status os on o.status_id=os.id
-                        where o.user_id=?", User::getInstance()->getUser()['id']);
+                        where o.user_id=?", User::getInstance()->getUserId());
             return;
         }
 

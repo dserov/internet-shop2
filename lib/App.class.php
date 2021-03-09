@@ -5,11 +5,11 @@ class App
     public static $user;
 
     public static function isAdmin() {
-        return isset(self::$user) && self::$user['is_admin'] == '1';
+        return self::isAuthorized() && self::$user['is_admin'] == '1';
     }
 
     public static function isUser() {
-        return isset(self::$user) && self::$user['is_admin'] == '0';
+        return self::isAuthorized() && self::$user['is_admin'] == '0';
     }
 
     public static function isAuthorized() {
@@ -66,11 +66,11 @@ class App
             'content_data' => $controller->$methodName($_GET),
             'page_title' => $controller->title,
             'user' => self::$user,
-            'cart' => ['goods_count'],
-            'orders' => Order::getInstance()->getOrders(), // масив с информацией об оформленных заказах
-            'auth_message' => $auth_message,
-            'logi' => $controller->view
+            'goods_in_cart' => Cart::getInstance()->getGoodsInCartApplyDiscount(),
+            'auth_message' => $auth_message
         ];
+
+//        $data['logi'] = print_r($data['content_data']['thumbnails'], true);
 
         if (isset($_GET['asAjax'])) {
             $result_code = (isset($data['content_data']['error'])) ? 400 : 200;

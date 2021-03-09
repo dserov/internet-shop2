@@ -8,7 +8,7 @@
 
 <h2>Ваши заказы</h2>
 
-{% if not orders %}
+{% if content_data.orders is empty %}
 <strong>Заказов пока нет... Не теряйте времени, <a href="?path=catalog">заказывайте!</a></strong>
 {% else %}
 <table class="tbl_harakteristiki" id="user-orders-table">
@@ -22,7 +22,7 @@
     </tr>
     </thead>
     <tbody>
-    {% for order in orders %}
+    {% for order in content_data.orders %}
     <tr>
         <td>{{order.id}}</td>
         <td>{{order.order_date}}</td>

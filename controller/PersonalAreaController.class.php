@@ -11,7 +11,8 @@ class PersonalAreaController extends Controller
     }
 
     function index($get = []){
-        return [];
+        $data['orders'] = Order::getInstance()->getOrders(); // масив с информацией об оформленных заказах
+        return $data;
     }
 
 }

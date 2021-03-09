@@ -11,25 +11,20 @@ class AuthController extends Controller
     public $view = 'auth';
     public $title = 'Авторизация пользователя';
 
-    public function login($get = [])
-    {
-        $data = [];
-
-        $user = User::getInstance()->getUser();
-
-        if ($user['is_admin']) {
+    public function index($get = []) {
+        if (App::isAdmin()) {
             // только что авторизовался админ
             header('Location: ?path=goods');
             exit;
         }
 
-        if (!$user['is_admin'] && $user['id']) {
+        if (App::isUser()) {
             // только что авторизовался юзер
             header('Location: ?path=personal_area');
             exit;
         }
 
-        return $data;
+        return [];
     }
 
     /**
@@ -45,11 +40,8 @@ class AuthController extends Controller
                 return [];
             }
 
-            $user = User::getInstance()->getUser();
-            if ($user['id']) {
-                // авторизован юзер, перекинем на главную
-                header('Location: ?');
-                exit;
+            if (!App::isAuthorized()) {
+                throw new Exception('Не авторизован');
             }
 
             $_GET['asAjax'] = 1;

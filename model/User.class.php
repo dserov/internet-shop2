@@ -65,6 +65,14 @@ class User
     }
 
     /**
+     * @return array
+     */
+    public function getUserId()
+    {
+        return @$this->user['id'];
+    }
+
+    /**
      * Проверка логина из сессии
      *
      * @param string $message
@@ -111,10 +119,6 @@ class User
             $message = 'Неверный логин или пароль.';
         }
         return false;
-    }
-
-    function authRegister()
-    {
     }
 
     /**

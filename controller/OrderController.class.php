@@ -15,6 +15,11 @@ class OrderController extends Controller
         $this->view = 'orders';
     }
 
+    public function index($data)
+    {
+        return parent::index($data);
+    }
+
     public function get() {
         try {
             if ($_SERVER['REQUEST_METHOD'] != 'POST') {
@@ -104,7 +109,7 @@ class OrderController extends Controller
         $this->reReadOrders();
     }
 
-    static public function ajaxSaveUpdateOrder($order_id)
+    public function update_order($order_id)
     {
         $response['result'] = 1;
         try {

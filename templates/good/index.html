@@ -1,0 +1,60 @@
+{% include 'header.html' %}
+
+{% if content_data.good is empty %}
+<h1>Такой товар не найден</h1>
+<p>Не&nbsp;теряйте времени, наш <a href="?path=catalog">каталог товаров</a> ждет Вас!</p>
+{% else %}
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="?path=catalog">Каталог товаров</a></li>
+        <li class="breadcrumb-item active" aria-current="page">{{content_data.good.name | escape}}</li>
+    </ol>
+</nav>
+<h1>{{content_data.good.name}}</h1>
+<h3 class="karto4ka_tovara">Описание товара</h3>
+<a target="_blank" href="{{ content_data.gallery[0].full}}" title="Открыть полную картинку">
+    <img src="{{ content_data.gallery[0].thumb}}" alt="10&quot; Ноутбук 4Good Cl100 синий"
+         class="karto4ka_tovara_img_thumb">
+</a>
+<p class="karto4ka_tovara_desc_short karto4ka_tovara">{{content_data.good.description_short | escape}}</p>
+<span class="cena_tovara clearfix"><strong>Всего за</strong> - <span
+        class="summa">{{content_data.good.price}}</span></span>
+{% if not user.id %}
+<button class="btn_kupit" onclick="window.location.href='?page=auth'">Авторизоваться</button>
+Для покупок необходима авторизация
+{% else %}
+<button class="btn_kupit" id="btn-to-cart" data-product-id="{{content_data.good.id}}">В корзину</button>
+    {% if content_data.alreadyInCart %}
+        Товар уже есть в корзине!
+    {% endif %}
+{% endif %}
+<div class="clearfix"></div>
+<h3 class="karto4ka_tovara">Фотогалерея</h3>
+{% for thumb in content_data.gallery %}
+    <a class="gallery-link" data-fancybox="gallery" href="{{thumb.full}}">
+        <img class="gallery-img" src="{{thumb.thumb}}" width="{{thumb.width}}" height="{{thumb.height}}" alt="{{thumb.alt}}">
+    </a>
+{% endfor %}
+<h3 class="karto4ka_tovara">Характеристики товара</h3>
+{{content_data.good.property | raw }}
+<h3 class="karto4ka_tovara">Подробное описание товара</h3>
+<p class="karto4ka_tovara_desc_full karto4ka_tovara">{{content_data.good.description}}.</p>
+<script type="text/javascript">
+    $(document).ready(function () {
+        $(document).on('click', '#btn-to-cart', function (e) {
+            let quantity = prompt("Сколько товара нужно?", "1");
+            if (!quantity) return;
+            let data = {id_product: $(this).data('product-id'), quantity: parseInt(quantity)};
+            $.post("api.php/cart/add_good",
+                JSON.stringify(data),
+                function (otvet, textStatus, jqXHR) {
+                    show_message('Сохранено', 'true');
+                    // перегрузим страницу
+                    window.location.reload();
+                });
+        })
+    });
+</script>
+{% endif %}
+
+{% include 'footer.html' %}
