@@ -113,3 +113,4 @@ fabric.properties
 .cache
 logs
 public/templates_c
+vendor

@@ -1,0 +1,490 @@
+/* Общее */
+body, html {
+    height: 100%;
+}
+
+body {
+    background-color: #f8f8f8;
+}
+
+h1,
+h2,
+h3 {
+    text-align: center;
+    background-color: #cfb8ff;
+    padding: 10px;
+    margin: 20px 0 20px;
+}
+
+.container {
+    height: 100%;
+    max-width: 800px;
+    min-width: 360px;
+    /*margin: 0 auto;*/
+}
+
+.header {
+    /*position: relative;*/
+    background-color: #b2b2b2;
+    background-image: url(../img/fon.jpg);
+    border-bottom: 2px solid black;
+}
+
+.header .logo-text {
+    font-weight: 700;
+    background-color: beige;
+    border-radius: 5px;
+    padding: 0 20px;
+}
+
+.content {
+    background-color: #E1E0E1;
+    min-height: 100%;
+}
+
+#pull {
+    height: 100px;
+}
+
+/* меню сайта */
+.nav-item {
+    font-style: italic;
+    font-size: 1.3em;
+    list-style-type: none;
+}
+
+.nav-link {
+    display: block;
+    height: 100%;
+    width: 100%;
+    color: #8B00FF;
+    background-color: #d6d6d6;
+}
+
+.nav-item.active {
+    border-bottom: 3px solid red;
+}
+
+.nav-link:hover,
+.nav-link:active {
+    color: white;
+    background-color: #8B00FF;
+}
+
+.navbar-toggler {
+    background-color: beige;
+    color: red;
+}
+
+.greeting::first-letter {
+    color: red;
+    font-size: 1.5em;
+}
+
+.greeting {
+    margin: 4% 0;
+    text-indent: 8%;
+    font-size: 1.5em;
+    padding: 0 2%;
+}
+
+/* Карточка товара */
+
+p.karto4ka_tovara:first-letter {
+    text-transform: uppercase;
+    color: red;
+    font-size: 1.5em;
+}
+
+p.karto4ka_tovara {
+    text-indent: 5%;
+}
+
+h3.karto4ka_tovara {
+    color: white;
+    font-size: 1.3em;
+    font-weight: 400;
+    background-color: #348200;
+    padding: 10px;
+    margin: 20px 0 15px;
+}
+
+.karto4ka_tovara_desc_short {
+    color: #707070;
+    font-size: 14px;
+    font-style: italic;
+    line-height: 16px;
+}
+
+.karto4ka_tovara_desc_full {
+    color: #484343;
+    font-size: 16px;
+    font-weight: 400;
+    line-height: 24px;
+    text-align: left;
+}
+
+.karto4ka_tovara_img_thumb {
+    float: left;
+    margin: 0 20px 10px 20px;
+    width: 150px;
+    background-color: #484343;
+    padding: 2px;
+    border-radius: 8px;
+}
+
+.karto4ka_tovara_img_thumb:hover {
+    background-color: white;
+}
+
+table.tbl_harakteristiki {
+    border-collapse: collapse;
+    margin: 0 auto;
+}
+
+table.tbl_harakteristiki tr:first-child {
+    line-height: 30px;
+}
+
+table.tbl_harakteristiki td, table.tbl_harakteristiki th {
+    border: 1px solid #000;
+    padding: 5px;
+}
+
+.cena_tovara {
+    font-size: 1.5em;
+}
+
+.cena_tovara .summa {
+    font-size: 1.8em;
+}
+
+.btn_kupit {
+    margin-left: 50px;
+    padding: 10px;
+    font-size: 2em;
+    border-radius: 8px;
+    background-color: #d89d00;
+    color: white;
+}
+
+.btn_kupit:hover {
+    background-color: #00da00;
+    padding: 10px 15px;
+}
+
+.btn_kupit:active {
+    background-color: #3aff3a;
+    color: #484343;
+}
+
+/* Каталог товаров */
+.tovar_list {
+    padding: 0;
+    list-style-type: none;
+}
+
+.tovar_list > div {
+    margin: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+    /*transition: width 0.5s linear, height 0.5s linear;*/
+    transition: all .2s ease-in-out;
+    padding: 10px;
+}
+
+.tovar_list > div:hover {
+    transform: scale(1.05);
+}
+
+.card {
+    width: 18rem;
+}
+
+/* Контакты */
+
+fieldset {
+    max-width: 500px;
+    margin: 0 auto;
+}
+
+.input_field {
+    display: flex;
+    width: 100%;
+    margin-bottom: 5px;
+}
+
+.input_field span {
+    width: 100px;
+}
+
+.input_field input {
+    width: 100%;
+    color: #707070;
+}
+
+.input_field input,
+textarea {
+    /*text-transform: capitalize;*/
+}
+
+textarea {
+    width: 100%;
+    color: #707070;
+}
+
+input[type="email"]:focus {
+    background-color: #707070;
+    color: white;
+}
+
+input[type=submit] {
+    background-color: #8B00FF;
+    color: white;
+    padding: 5px;
+}
+
+input[type=reset] {
+    padding: 5px;
+}
+
+.karta {
+    height: 374px;
+    width: 100%;
+}
+
+.addr {
+    padding-left: 20px;
+    margin: 5px 0;
+}
+
+.addr img {
+    width: 24px;
+    vertical-align: middle;
+    padding-right: 10px;
+}
+
+/* Футер */
+
+.footer {
+    border-top: 2px solid black;
+    margin-top: -100px;
+    background-color: #b2b2b2;
+    height: 100px;
+}
+
+.footer p {
+    margin: 0;
+    text-align: right;
+    padding-right: 20px;
+    padding-top: 10px;
+    color: black;
+}
+
+.user_panel {
+    color: #8B00FF;
+    background-color: #d6d6d6;
+    display: flex;
+    justify-content: space-between;
+}
+
+.photo-gallery {
+    display: flex;
+    flex-flow: wrap row;
+}
+
+.reviews-table {
+    border: 1px solid black;
+}
+
+.reviews-table th, .reviews-table td {
+    border: 1px solid black;
+}
+
+.reviews-table tr:nth-child(even) {
+    border: 1px solid red;
+}
+
+.feedback-actions__panel {
+    display: flex;
+}
+
+#loading-layer {
+    display: none;
+}
+
+#loading-layer > div {
+    font-family: "Verdana";
+    width: 200px;
+    height: 70px;
+    background-attachment: scroll;
+    background-repeat: repeat;
+    background-image: none;
+    background-position: 0 0;
+    background-size: auto;
+    background-origin: padding-box;
+    background-clip: border-box;
+    background-color: rgb(255, 255, 255);
+    padding: 10px;
+    text-align: center;
+    border: 1px solid rgb(0, 0, 0);
+    position: absolute;
+    z-index: 99;
+    left: 50%;
+    top: 50%;
+    margin: -25px 0 0 -100px;
+    font-weight: 900;
+    font-size: 13px;
+}
+
+/* Style for overlay and box */
+.overlay {
+    background-color: #0000004a;
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 100;
+}
+
+#message-layer {
+    display: none;
+}
+
+#message-layer > div {
+    font-family: "Arial", "Verdana";
+    width: 40%;
+    /*    height: 50px;*/
+    background-attachment: scroll;
+    background-repeat: repeat;
+    background-image: none;
+    background-position: 0 0;
+    background-size: auto;
+    background-origin: padding-box;
+    background-clip: border-box;
+    padding: 20px;
+    text-align: center;
+    position: absolute;
+    z-index: 99;
+    left: 30%;
+    right: 30%;
+    top: 50%;
+}
+
+.errorbox {
+    border: 1px solid red;
+    background: #ffdddd;
+    font-weight: bold;
+    /*    font-size: 15px; */
+    color: #aa0000;
+    padding: 10px;
+    /*width: 100%;*/
+}
+
+.allokbox {
+    border: 1px solid #007E00;
+    background: #EFFFEF;
+    font-weight: bold;
+    /*    font-size: 15px; */
+    color: #007E00;
+    padding: 10px;
+    /*width: 100%;*/
+}
+
+#register-ok {
+    display: none;
+}
+
+.spinner-container {
+    width: 55px;
+    background-color: white;
+    position: relative;
+    display: inline-block;
+    overflow: hidden;
+    padding: 0;
+    vertical-align: middle;
+    border: 1px solid #868686;
+}
+
+.spinner-input:focus {
+    outline: none;
+}
+
+.spinner-input {
+    width: calc(100% - 1.6em);
+    border: none;
+    background: none;
+    color: inherit;
+    /*margin: .1em 0;*/
+    vertical-align: middle;
+    margin-right: 1.6em;
+}
+
+.spinner-button-up {
+    border-top-left-radius: initial !important;
+    top: 0;
+}
+
+.spinner-button-down {
+    border-bottom-left-radius: initial !important;
+    bottom: 0;
+}
+
+.spinner-button {
+    background-color: #d2d2d2;
+    border-left: 1px solid #868686;
+    width: 1.6em;
+    height: 51%;
+    font-size: 1em;
+    padding: 0;
+    margin: 0;
+    text-align: center;
+    position: absolute;
+    cursor: default;
+    overflow: hidden;
+    right: 0;
+}
+
+.spinner-button:focus {
+    outline: none;
+}
+
+.spinner-button:hover {
+    text-decoration: none;
+    background-color: #a9a9a9;
+}
+
+.cart-message {
+    color: darkgreen;
+    display: none;
+}
+
+#order-detail > .modal-dialog {
+    max-width: 650px;
+}
+
+@media screen and (max-width: 768px) {
+    .nav-link {
+        text-indent: 20px;
+    }
+
+    .card-img-top {
+        width: auto;
+    }
+
+    .card {
+        flex-direction: row;
+        width: 100%;
+    }
+}
+
+@media screen and (max-width: 576px) {
+    .card-img-top {
+        width: 100%;
+    }
+
+    .card {
+        width: 18rem;
+        flex-direction: column;
+    }
+}

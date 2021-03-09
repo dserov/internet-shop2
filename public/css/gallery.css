@@ -1,0 +1,48 @@
+* {
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font: .8em Georgia, "Times New Roman", Serif;
+    background: #fff;
+    color: #777;
+}
+
+h1, h2 {
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+.gallery {
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.gallery-link {
+    display: block;
+    border: 4px solid grey;
+    border-radius: 4px;
+    margin: 10px;
+    text-decoration: none;
+}
+
+.clearfix {
+    content: '';
+    clear: both;
+}
+
+.error-list {
+    border: 1px solid red;
+    color: red;
+    margin: 10px 0;
+    padding: 10px;
+    background-color: #ffdcdc;
+}
+
+.single-picture {
+    max-width: 100%;
+    border: 4px solid grey;
+    border-radius: 4px;
+    margin: 10px 0;
+}

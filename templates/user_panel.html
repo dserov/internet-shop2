@@ -1,0 +1,24 @@
+<div class="user_panel">
+    {% if user.is_admin == '1' %}
+        <div>
+            <a href="?path=goods">Товары</a>
+            <a href="?path=orders">Стол заказов</a>
+        </div>
+        <div>
+            Вы вошли, как <span>{{ user.login }}</span>
+            <a href="?path=auth/logout">Выход</a>
+        </div>
+    {% endif %}
+    {% if user.is_admin == '0' and user.login %}
+        <div>
+            Вы вошли, как <span>{{ user.login }}</span>
+            <a href="?path=personal_area">Личный кабинет</a>
+        </div>
+        <div>
+            <a href='?path=cart' title='Смотреть корзину'>В корзине</a>: {{ cart.goods_count }} товаров
+        </div>
+    {% endif %}
+    {% if user.is_admin == '0' and not user.login %}
+        <span>Для покупок необходима <a href="?path=auth/login">авторизация</a></span>
+    {% endif %}
+</div>
