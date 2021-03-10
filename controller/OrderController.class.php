@@ -15,9 +15,11 @@ class OrderController extends Controller
         $this->view = 'orders';
     }
 
-    public function index($data)
+    public function index($data = [])
     {
-        return parent::index($data);
+        $data['orders'] = Order::getInstance()->getOrders(); // масив с информацией об оформленных заказах
+        $data['order_status'] = OrderStatus::getInstance()->getAll(); // масив с информацией осостояниях заказа
+        return $data;
     }
 
     public function get() {
@@ -45,89 +47,113 @@ class OrderController extends Controller
         return $response;
     }
 
-    static function ajaxCreateFromCart()
-    {
-        $response['result'] = 1;
+    public function update() {
         try {
-            if (!isUser()) throw new Exception("Только для авторизованных пользователей!");
+            if ($_SERVER['REQUEST_METHOD'] != 'POST') {
+                return [];
+            }
 
-            Orders::getInstance()->createFromCart();
-            http_response(200, json_encode($response), 'application/json');
-        } catch (Exception $e) {
-            $response['result'] = 0;
-            $response['errorMessage'] = $e->getMessage();
-            http_response(400, json_encode($response), 'application/json');
-        }
-    }
+            if (!App::isAuthorized()) {
+                throw new Exception('Не авторизован');
+            }
 
-    /**
-     * Создание заказа пользователем
-     *
-     * @throws Exception
-     */
-    private function createFromCart()
-    {
-        // Корзина текущего ползьвателя со скидками
-        // и одновременным отфильтровыванием отсутствующих товаров
-        $goodsInCart = Cart::getInstance()->getGoodsInCartApplyDiscount(new Discount());
-
-        if (!$goodsInCart) throw new Exception('Корзина пуста!');
-
-        // сумма всего заказа
-        $total_vsego = 0.0;
-        foreach ($goodsInCart as $good) {
-            $total_vsego += $good['vsego'];
-        }
-
-        // запись заказа
-        DB::getInstance()->StartTransaction();
-        $this->defaultOrder($order);
-        $order['vsego'] = $total_vsego;
-        $order['user_id'] = $_SESSION['user_id'];
-        $order['order_date'] = date("Y-m-d H:i:s");
-        $order['status_id'] = 1; // Новый заказ
-//        DB::getInstance()->QueryOne("INSERT INTO orders set vsego=?, order_date=now(), user_id=?, status_id=1", $total_vsego, $_SESSION['user_id']);
-        $this->save($order, $errors);
-        $order_id = $order['id'];
-
-        // подробности заказа
-        $values = [];
-        foreach ($goodsInCart as $good) {
-            $values[] = DB::getInstance()->PrepareStatement("(?,?,?,?,?,?,?,?)"
-                , $order_id, $good['goods_id']
-                , $good['quantity'], $good['price']
-                , $good['discount'], $good['itogo']
-                , $good['vsego'], $good['discountMessage']);
-        }
-        DB::getInstance()->QueryOne("INSERT INTO orders_detail (order_id, goods_id, quantity, price, discount, itogo, vsego, discount_message) values " . implode(',', $values));
-
-        // очистим корзину
-        DB::getInstance()->QueryOne("DELETE FROM cart WHERE user_id=?", $_SESSION['user_id']);
-
-        DB::getInstance()->CommitTransaction();
-
-        $this->reReadOrders();
-    }
-
-    public function update_order($order_id)
-    {
-        $response['result'] = 1;
-        try {
-            if (!isUser() && !isAdmin()) throw new Exception("Только для авторизованных пользователей!");
+            $_GET['asAjax'] = 1;
 
             $json_data = file_get_contents("php://input");
-            $order = json_decode($json_data, true);
-            $order['id'] = $order_id;
+            $data = json_decode($json_data, true);
 
-            $errors = [];
-            Orders::getInstance()->save($order, $errors);
-            if ($errors) throw new Exception(implode('<br>', $errors));
+            Order::getInstance()->save($data);
 
-            http_response(200, json_encode($response), 'application/json');
         } catch (Exception $e) {
-            $response['result'] = 0;
-            $response['errorMessage'] = $e->getMessage();
-            http_response(400, json_encode($response), 'application/json');
+            $response['error'] = $e->getMessage();
+            Http::response(400, $response);
         }
+        return [];
     }
+
+    //    function ajaxCreateFromCart()
+//    {
+//        $response['result'] = 1;
+//        try {
+//            if (!isUser()) throw new Exception("Только для авторизованных пользователей!");
+//
+//            Orders::getInstance()->createFromCart();
+//            http_response(200, json_encode($response), 'application/json');
+//        } catch (Exception $e) {
+//            $response['result'] = 0;
+//            $response['errorMessage'] = $e->getMessage();
+//            http_response(400, json_encode($response), 'application/json');
+//        }
+//    }
+
+//    /**
+//     * Создание заказа пользователем
+//     *
+//     * @throws Exception
+//     */
+//    private function createFromCart()
+//    {
+//        // Корзина текущего ползьвателя со скидками
+//        // и одновременным отфильтровыванием отсутствующих товаров
+//        $goodsInCart = Cart::getInstance()->getGoodsInCartApplyDiscount(new Discount());
+//
+//        if (!$goodsInCart) throw new Exception('Корзина пуста!');
+//
+//        // сумма всего заказа
+//        $total_vsego = 0.0;
+//        foreach ($goodsInCart as $good) {
+//            $total_vsego += $good['vsego'];
+//        }
+//
+//        // запись заказа
+//        DB::getInstance()->StartTransaction();
+//        $this->defaultOrder($order);
+//        $order['vsego'] = $total_vsego;
+//        $order['user_id'] = $_SESSION['user_id'];
+//        $order['order_date'] = date("Y-m-d H:i:s");
+//        $order['status_id'] = 1; // Новый заказ
+////        DB::getInstance()->QueryOne("INSERT INTO orders set vsego=?, order_date=now(), user_id=?, status_id=1", $total_vsego, $_SESSION['user_id']);
+//        $this->save($order, $errors);
+//        $order_id = $order['id'];
+//
+//        // подробности заказа
+//        $values = [];
+//        foreach ($goodsInCart as $good) {
+//            $values[] = DB::getInstance()->PrepareStatement("(?,?,?,?,?,?,?,?)"
+//                , $order_id, $good['goods_id']
+//                , $good['quantity'], $good['price']
+//                , $good['discount'], $good['itogo']
+//                , $good['vsego'], $good['discountMessage']);
+//        }
+//        DB::getInstance()->QueryOne("INSERT INTO orders_detail (order_id, goods_id, quantity, price, discount, itogo, vsego, discount_message) values " . implode(',', $values));
+//
+//        // очистим корзину
+//        DB::getInstance()->QueryOne("DELETE FROM cart WHERE user_id=?", $_SESSION['user_id']);
+//
+//        DB::getInstance()->CommitTransaction();
+//
+//        $this->reReadOrders();
+//    }
+
+//    public function update_order($order_id)
+//    {
+//        $response['result'] = 1;
+//        try {
+//            if (!isUser() && !isAdmin()) throw new Exception("Только для авторизованных пользователей!");
+//
+//            $json_data = file_get_contents("php://input");
+//            $order = json_decode($json_data, true);
+//            $order['id'] = $order_id;
+//
+//            $errors = [];
+//            Orders::getInstance()->save($order, $errors);
+//            if ($errors) throw new Exception(implode('<br>', $errors));
+//
+//            http_response(200, json_encode($response), 'application/json');
+//        } catch (Exception $e) {
+//            $response['result'] = 0;
+//            $response['errorMessage'] = $e->getMessage();
+//            http_response(400, json_encode($response), 'application/json');
+//        }
+//    }
 }

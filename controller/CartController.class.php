@@ -46,7 +46,7 @@ class CartController extends Controller
         return [];
     }
 
-    static function addGoods($get = [])
+    function addGoods($get = [])
     {
         try {
             if ($_SERVER['REQUEST_METHOD'] != 'POST') {

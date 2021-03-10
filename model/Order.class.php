@@ -53,7 +53,7 @@ class Order extends Model {
         if (App::isAdmin()) {
             $this->orders = DB::getInstance()->QueryMany("SELECT o.*, os.name as status_name, u.login as user_login from orders o 
                                                                 inner join order_status os on o.status_id=os.id
-                                                                inner join users u on u.id=o.user_id");
+                                                                inner join users u on u.id=o.user_id order by o.order_date desc");
         }
     }
 

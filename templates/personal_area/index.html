@@ -67,13 +67,11 @@
     </div>
 </div>
 
-<!--<script src="js/tmpl.min.js"></script>-->
-<!--<script src="js/order_template.js" type="text/x-tmpl" id="order_detail_row"></script>-->
 <script type="text/javascript">
     $(document).ready(function (e) {
         $(document).on('click', '.show-order-detail', function (e) {
             let order_id = parseInt($(this).data('order-id'));
-            $.post("?path=order/get/",
+            $.post("?path=order/get",
                 JSON.stringify({ 'order_id' : order_id }),
                 function (otvet, textStatus, jqXHR) {
                     // очистить старые строки
