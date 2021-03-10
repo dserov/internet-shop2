@@ -1,0 +1,64 @@
+{% include 'header.html' %}
+
+{% for error in content_data.errors %}
+    <span class="error">{{error}}</span>
+{% endfor %}
+<h1>Список товаров</h1>
+<table class="tbl_harakteristiki">
+    <tr>
+        <th>Наименование</th>
+        <th>Цена</th>
+        <th>Действия</th>
+    </tr>
+    {% if content_data.goods is empty %}
+        <tr><td colspan='3'>Товаров пока нет!</td></tr>
+    {% endif %}
+    {% for good in content_data.goods %}
+        <tr>
+            <td>{{good.name | escape}}</td>
+            <td>{{good.price | escape}}</td>
+            <td class="feedback-actions__panel">
+                <form action="?path=goods" method="post"><input type="hidden" name="id"
+                                                                value="{{good.id}}">
+                    <button type="submit" name="action" value="delete" title="Удалить товар">Удалить</button>&nbsp;
+                </form>
+                <form action="?path=goods" method="post"><input type="hidden" name="id"
+                                                                value="{{good.id}}">
+                    <button type="submit" name="action" value="edit" title="Изменить товар">Изменить</button>&nbsp;
+                </form>
+                <a href="?path=photo/{{good.id}}">Фотогалерея</a>
+            </td>
+        </tr>
+    {% endfor %}
+</table>
+<hr>
+{% if content_data.good_item.action == 'edit' %}
+<h2>Редактировать товар</h2>
+{% else %}
+<h2>Добавить товар</h2>
+{% endif %}
+<form action="?path=goods" method="post">
+    <input type="hidden" name="id" value="{{content_data.good_item.id}}">
+    <div class="input_field"><span>Наименование: </span><input type="text" name="name" value="{{content_data.good_item.name|escape}}"
+                                                               required placeholder="Введите наименование"></div>
+    <div class="input_field"><span>Краткое описание: </span><textarea name="description_short"
+                                                                      placeholder="Краткое описание">{{content_data.good_item.description_short|escape}}</textarea>
+    </div>
+    <div class="input_field"><span>Характеристики: </span><textarea name="property"
+                                                                    placeholder="Таблица характеристик">{{content_data.good_item.property|escape}}</textarea>
+    </div>
+    <div class="input_field"><span>Описание: </span><textarea name="description"
+                                                              placeholder="Подробное описание">{{content_data.good_item.description|escape}}</textarea>
+    </div>
+    <div class="input_field"><span>Цена: </span><input type="text" name="price" value="{{content_data.good_item.price}}"
+                                                       placeholder="Цена"></div>
+    <div class="input_field"><span>&nbsp;</span>
+        {% if content_data.good_item.action == 'edit' %}
+        <button type="submit" name="action" value="update">Обновить товар</button>
+        {% else %}
+        <button type="submit" name="action" value="add">Добавить товар</button>
+        {% endif %}
+    </div>
+</form>
+
+{% include 'footer.html' %}
