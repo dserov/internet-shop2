@@ -30,6 +30,7 @@
         <td title="{{ order.description }}">{{order.status_name}}</td>
         <td>
             <button class="show-order-detail" data-order-id="{{order.id}}">Состав заказа</button>
+            <button class="cancel-order" data-order-id="{{order.id}}"><i class="fas fa-ban" style="color: darkred"></i> Отменить заказ</button>
         </td>
     </tr>
     {% endfor %}
@@ -97,6 +98,16 @@
                     }
                     // смотрим красоту
                     $('#order-detail').modal();
+                }
+            );
+        });
+        $(document).on('click', '.cancel-order', function (e) {
+            let order_id = parseInt($(this).data('order-id'));
+            $.post("?path=order/cancel",
+                JSON.stringify({ 'id' : order_id }),
+                function (otvet, textStatus, jqXHR) {
+                    show_message('Заказ отменен', 'true');
+                    setTimeout(() => window.location.reload(), 1000);
                 }
             );
         })

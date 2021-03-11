@@ -10,7 +10,8 @@
     <p>Спасибо, что доверяете нам!</p>
 </div>
 {% if goods_in_cart is empty %}
-<strong>Ваша корзина пуста</strong>
+<strong>Ваша корзина пуста</strong><br><br>
+Не&nbsp;теряйте времени, наш <a href="?path=catalog">каталог товаров</a> ждет Вас!</p>
 {% else %}
 <form id="create-order" action="tra-la-la">
     <table class="tbl_harakteristiki" id="cart-table">
@@ -28,7 +29,7 @@
         <tbody>
         {% set total = 0 %}
         {% for good in goods_in_cart %}
-        <tr data-product-id="{{ good.goods_id}}">
+        <tr data-cart-id="{{ good.id}}">
             <td>{{good.name}}</td>
             <td><input type="text" value="{{good.quantity}}" name="quantity" class="cart-quantity"/></td>
             <td><span class="cart-price">{{good.price}}</span></td>
@@ -36,7 +37,7 @@
             <td><span class="cart-itogo">{{good.itogo}}</span></td>
             <td><span class="cart-vsego">{{good.vsego}}</span></td>
             <td>
-                <button data-product-id="{{good.goods_id}}" class="btn-delete-good"
+                <button class="btn-delete-good"
                         title="Удалить товар из корзины">Удалить
                 </button>
             </td>
@@ -56,13 +57,14 @@
         $(document).on("click", ".btn-delete-good", function (e) {
             e.preventDefault();
             if (!confirm("Удалить товар?")) return;
-            let data = {id_product: $(this).data('product-id')};
-            $.post("api.php/cart/remove/goods/",
+            let $tr = $(this).closest('tr');
+            let data = {id: $tr.data('cart-id')};
+            $.post("?path=cart/delete",
                 JSON.stringify(data),
                 function (otvet, textStatus, jqXHR) {
                     show_message('Удалено', 'true');
                     // перегрузим страницу
-                    window.location.reload();
+                    setTimeout(() => window.location.reload(), 1000);
                 }
             );
         });
@@ -70,19 +72,16 @@
             minValue: 1,
             updateHandler: function () {
                 let $tr = this.closest('tr');
-                let data = {id_product: $tr.data('product-id'), quantity: parseInt(this.val()), action: "set"}; // флаг установки(!) количества
-                let posting = $.post("api.php/cart/update_goods/",
+                let data = {id: $tr.data('cart-id'), quantity: parseInt(this.val())}; // флаг установки(!) количества
+                let posting = $.post("?path=cart/update",
                     JSON.stringify(data),
                     function (otvet, textStatus, jqXHR) {
                         // пересчет строк таблицы
                         recalcCart();
-//                        show_message('Сохранено', 'true');
                     }
                 );
                 posting.fail(function () {
-                    setTimeout(function () {
-                        window.location.reload();
-                    }, 1000);
+                    setTimeout(() => window.location.reload(), 1000);
                 });
             }
         };
@@ -91,7 +90,7 @@
         $(document).on("submit", "#create-order", function (e) {
             e.preventDefault();
             if (!confirm("Создать заказ?")) return;
-            $.post("api.php/orders/create_from_cart/",
+            $.post("?path=order/create_from_cart",
                 JSON.stringify({}),
                 function (otvet, textStatus, jqXHR) {
                     $('#create-order').fadeOut();

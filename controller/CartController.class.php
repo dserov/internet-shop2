@@ -11,46 +11,62 @@ class CartController extends Controller
     function __construct()
     {
         parent::__construct();
-        $this->title = 'корзина товаров';
+        $this->title = 'Корзина товаров';
         $this->view = 'cart';
     }
 
     public function index($data)
     {
-        return parent::index($data);
+        return [];
     }
 
-
-    function removeGoods($get = [])
-    {
+    public function update($get=[]) {
         try {
             if ($_SERVER['REQUEST_METHOD'] != 'POST') {
-                return [];
+                throw new Exception('Ошибка метода');
             }
-
             if (!App::isAuthorized()) {
                 throw new Exception('Не авторизован');
-                // авторизован юзер, перекинем на главную
             }
 
             $_GET['asAjax'] = 1;
 
             $json_data = file_get_contents("php://input");
             $data = json_decode($json_data, true);
-            Cart::getInstance()->removeGoods($data);
-
+            Cart::getInstance()->save($data);
         } catch (Exception $e) {
-            $response['error'] = $e->getMessage();
-            Http::response(400, $response);
+            return ['error' => $e->getMessage()];
         }
         return [];
     }
 
-    function addGoods($get = [])
+    public function delete($get = [])
     {
         try {
             if ($_SERVER['REQUEST_METHOD'] != 'POST') {
-                return [];
+                throw new Exception('Не верный метод');
+            }
+
+            if (!App::isAuthorized()) {
+                throw new Exception('Не авторизован');
+            }
+
+            $_GET['asAjax'] = 1;
+
+            $json_data = file_get_contents("php://input");
+            $data = json_decode($json_data, true);
+            Cart::getInstance()->deleteById($data['id']);
+        } catch (Exception $e) {
+            return ['error' => $e->getMessage()];
+        }
+        return [];
+    }
+
+    public function add_product($get = [])
+    {
+        try {
+            if ($_SERVER['REQUEST_METHOD'] != 'POST') {
+                throw new Exception('Не верный метод');
             }
 
             if (!App::isAuthorized()) {
@@ -62,11 +78,12 @@ class CartController extends Controller
 
             $json_data = file_get_contents("php://input");
             $data = json_decode($json_data, true);
-            Cart::getInstance()->addGoods($data);
 
+            // проверим, что товар существует
+            $product = Good::getInstance()->getById($data['product_id']);
+            Cart::getInstance()->addProduct($product, $data['product_quantity']);
         } catch (Exception $e) {
-            $response['error'] = $e->getMessage();
-            Http::response(400, $response);
+            return ['error' => $e->getMessage()];
         }
         return [];
     }

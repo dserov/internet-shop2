@@ -8,30 +8,13 @@
 
 class User
 {
-    static $_instance;
-    private $user = [];
+    use Singleton;
 
-    public static function getInstance()
-    {
-        if (self::$_instance === null) {
-            self::$_instance = new self;
-        }
-
-        return self::$_instance;
-    }
-
-    private function __construct()
-    {
-        $this->user = [
-            'id' => 0,
-            'login' => '',
-            'is_admin' => 0
-        ];
-    }
-
-    private function __clone()
-    {
-    }
+    private $user = [
+        'id' => 0,
+        'login' => '',
+        'is_admin' => 0
+    ];
 
     /**
      *
@@ -126,7 +109,8 @@ class User
      * @return array|bool
      * @throws Exception
      */
-    public function getUserById($id) {
+    public function getUserById($id)
+    {
         return DB::getInstance()->QueryOne("select * from users where id=? limit 1", $id);
     }
 
@@ -135,7 +119,8 @@ class User
      * @return array|bool
      * @throws Exception
      */
-    public function getUserByLogin($login) {
+    public function getUserByLogin($login)
+    {
         return DB::getInstance()->QueryOne("select * from users where login=? limit 1", $login);
     }
 
@@ -143,7 +128,8 @@ class User
      * @param $data
      * @throws Exception
      */
-    public function insertNewUser($data) {
+    public function insertNewUser($data)
+    {
         DB::getInstance()->QueryOne("insert into users (login, password, fio) values (?,?,?)", $data['login'], $data['password'], $data['fio']);
     }
 }

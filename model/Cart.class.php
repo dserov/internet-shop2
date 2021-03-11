@@ -8,18 +8,26 @@
 
 class Cart extends Model
 {
+    use Singleton;
+
+    protected static $table = 'cart';
     /**
      * @var DB $instance
      */
-    private static $instance = null;
+//    private static $instance = null;
 
-    static function getInstance()
-    {
-        if (self::$instance === null) {
-            self::$instance = new Cart();
-        }
-        return self::$instance;
-    }
+    /**
+     * @var array
+     */
+    private $cart = [];
+
+//    static function getInstance()
+//    {
+//        if (self::$instance === null) {
+//            self::$instance = new self;
+//        }
+//        return self::$instance;
+//    }
 
     private function __construct()
     {
@@ -27,21 +35,16 @@ class Cart extends Model
         $this->reReadCart();
     }
 
-    private function __clone()
-    {
-    }
-
-    /**
-     * @var array
-     */
-    private $goodsInCart = [];
+//    private function __clone()
+//    {
+//    }
 
     /**
      * @return array
      */
-    function getGoodsInCart()
+    function getCart()
     {
-        return $this->goodsInCart;
+        return $this->cart;
     }
 
     /**
@@ -51,76 +54,65 @@ class Cart extends Model
     function getGoodsInCartApplyDiscount(Discount $discount_instance = null): array
     {
         $this->reReadCart();
-
-//        throw new Exception(print_r($this->goodsInCart, true));
-
         $data = [];
-        foreach ($this->goodsInCart as $good) {
-            $good['discountMessage'] = '';
+        foreach ($this->cart as $good) {
+            $good['discount_message'] = '';
             $discount = 0;
             if ($discount_instance) {
-                $discount = $discount_instance->checkDiscount($good['goods_id'], $good['discountMessage']);
+                $discount = $discount_instance->checkDiscount($good['goods_id'], $good['discount_message']);
             }
             $good['discount'] = round($good['price'] * $discount / 100, 2);
             $good['itogo'] = $good['price'] - $good['discount'];
             $good['vsego'] = round($good['itogo'] * $good['quantity'], 2);
             $data[] = $good;
         }
-        $this->goodsInCart = $data;
+        $this->cart = $data;
         return $data;
     }
 
     private function reReadCart()
     {
-        $this->goodsInCart = DB::getInstance()->QueryMany("SELECT c.id, c.goods_id, g.name, g.price, c.quantity, c.user_id 
+        $this->cart = DB::getInstance()->QueryMany("SELECT c.id, c.goods_id, g.name, g.price, c.quantity, c.user_id 
         FROM cart c INNER JOIN goods g ON c.goods_id = g.id where c.user_id=?", User::getInstance()->getUserId());
     }
 
-    public function isAlreadyInCart($good_id) {
-        $cart = DB::getInstance()->QueryOne("select id from cart where user_id=? and goods_id=?", User::getInstance()->getUserId(), $good_id);
-        return !empty($cart);
+    /**
+     * @param $product_id
+     * @return array
+     */
+    public function productInCart($product_id) {
+        return array_filter($this->cart, function ($item) use ($product_id) {
+            return $item['goods_id'] == $product_id;
+        });
     }
 
     /**
-     * @param $data
+     * Добавляем продукт в корзину
+     *
+     * @param array $product
+     * @param int $quantity
      * @throws Exception
      */
-    public function addGoods($data)
+    public function addProduct($product, $quantity)
     {
         // проверка входных данных
-        $product = DB::getInstance()->QueryOne("select * from goods where id=?", $data['id_product']);
         if (!$product) throw new Exception('Такой продукт не найден');
-        if (!is_numeric($data['quantity']) || $data['quantity'] <= 0)
+        if (!is_numeric($quantity) || $quantity <= 0)
             throw new Exception('Количество указано неверно');
 
         // проверка наличия товара в корзине
-        $goodInCart = array_filter($this->goodsInCart, function ($item) use ($product) {
-            return $item['user_id'] == User::getInstance()->getUserId() && $item['goods_id'] == $product['id'];
-        });
-        $goodInCart = current($goodInCart);
-        if ($goodInCart) {
-            // установка количества, либо суммирование количества с тем, что уже в корзине
-            if (!isset($data['action']) || $data['action'] != 'set') {
-                $data['quantity'] += $goodInCart['quantity'];
-            }
-            DB::getInstance()->QueryOne("UPDATE cart SET quantity=? where id=?", $data['quantity'], $goodInCart['id']);
+        $productInCart = $this->productInCart($product['id']);
+        if ($productInCart) {
+            $productInCart = current($productInCart);
+            // суммирование количества с тем, что уже в корзине
+            $productInCart['quantity'] += $quantity;
         } else {
-            DB::getInstance()->QueryOne("INSERT INTO cart (goods_id, user_id, quantity) values (?,?,?)",
-                $product['id'], User::getInstance()->getUserId(), $data['quantity']);
+            $productInCart['goods_id'] = $product['id'];
+            $productInCart['quantity'] = $quantity;
+            $productInCart['user_id'] = User::getInstance()->getUserId();
         }
+        $this->save($productInCart);
 
         $this->reReadCart();
     }
-
-    /**
-     * @param $data
-     * @throws Exception
-     */
-    public function removeGoods($data)
-    {
-        DB::getInstance()->QueryOne("DELETE FROM cart WHERE goods_id=? and user_id=?", $data['id_product'], User::getInstance()->getUserId());
-        $this->reReadCart();
-    }
-
-
 }

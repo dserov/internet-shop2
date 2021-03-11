@@ -20,7 +20,7 @@ class App
     {
         session_start();
         date_default_timezone_set('Europe/Moscow');
-        db::getInstance()->Connect(Config::get('db_user'), Config::get('db_password'), Config::get('db_base'));
+        DB::getInstance()->Connect(Config::get('db_user'), Config::get('db_password'), Config::get('db_base'));
 
         if (php_sapi_name() !== 'cli' && isset($_SERVER) && isset($_GET)) {
             self::web($_GET['path'] ? $_GET['path'] : '');
@@ -67,7 +67,8 @@ class App
             'page_title' => $controller->title,
             'user' => self::$user,
             'goods_in_cart' => Cart::getInstance()->getGoodsInCartApplyDiscount(),
-            'auth_message' => $auth_message
+            'auth_message' => $auth_message,
+            'page' => $_GET['page']
         ];
 
 //        $data['logi'] = print_r($data['content_data']['thumbnails'], true);

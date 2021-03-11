@@ -8,32 +8,15 @@
 
 class Picture extends Model
 {
-    static $_instance;
-    private $picture = [];
-
-    public static function getInstance()
-    {
-        if (self::$_instance === null) {
-            self::$_instance = new self;
-        }
-
-        return self::$_instance;
-    }
-
-    private function __construct()
-    {
-    }
-
-    private function __clone()
-    {
-    }
+    use Singleton;
+    protected static $table = 'pictures';
 
     /**
      * @return array|bool
      * @throws Exception
      */
     public function getAll() {
-        return DB::getInstance()->QueryMany("SELECT * FROM pictures ORDER BY product_id, id desc");
+        return DB::getInstance()->QueryMany("SELECT * FROM " . static::$table . " ORDER BY product_id, id desc");
     }
 
     /**
@@ -41,8 +24,8 @@ class Picture extends Model
      * @return array|bool
      * @throws Exception
      */
-    public function getByGoodId($id) {
-        return DB::getInstance()->QueryMany("SELECT * FROM pictures WHERE product_id=? ORDER BY product_id, id desc", $id);
+    public function getByProductId($id) {
+        return DB::getInstance()->QueryMany("SELECT * FROM " . static::$table . " WHERE product_id=? ORDER BY product_id, id desc", $id);
     }
 
 }

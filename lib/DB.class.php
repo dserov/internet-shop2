@@ -2,26 +2,12 @@
 
 class DB
 {
+    use Singleton;
 
     /**
      * @var $DBLink PDO
      */
     private $DBLink = FALSE;
-    /**
-     * @var DB $instance
-     */
-    private static $instance = null;
-
-    static function getInstance()
-    {
-        if (self::$instance === null) {
-            self::$instance = new DB();
-        }
-        return self::$instance;
-    }
-
-    private function __construct() {}
-
     public function Connect($user, $password, $base, $host = 'localhost')
     {
         if ($this->DBLink != FALSE)
@@ -30,10 +16,6 @@ class DB
         $this->DBLink = new PDO("mysql:host={$host};dbname={$base};charset=UTF8", $user, $password,
             array(PDO::MYSQL_ATTR_INIT_COMMAND => 'SET NAMES \'UTF8\';'));
         $this->DBLink->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-    }
-
-    private function __clone()
-    {
     }
 
     /**
@@ -145,5 +127,9 @@ class DB
 
     function CommitTransaction() {
         if ($this->getInstance()->DBLink->inTransaction()) $this->getInstance()->DBLink->commit();
+    }
+
+    function RollbackTransaction() {
+        if ($this->getInstance()->DBLink->inTransaction()) $this->getInstance()->DBLink->rollBack();
     }
 }

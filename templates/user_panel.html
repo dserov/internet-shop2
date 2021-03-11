@@ -14,9 +14,11 @@
             Вы вошли, как <span>{{ user.login }}</span>
             <a href="?path=personal_area">Личный кабинет</a>
         </div>
-        <div>
-            <a href='?path=cart' title='Смотреть корзину'>В корзине</a>: {{ goods_in_cart | length }} товаров
-        </div>
+        {% if page != 'cart' %}
+            <div>
+                <a href='?path=cart' title='Смотреть корзину'>В корзине</a>: {{ goods_in_cart | length }} товаров
+            </div>
+        {% endif %}
     {% endif %}
     {% if user.is_admin == '0' and not user.login %}
         <span>Для покупок необходима <a href="?path=auth">авторизация</a></span>

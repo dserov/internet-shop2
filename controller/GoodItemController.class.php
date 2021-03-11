@@ -18,10 +18,10 @@ class GoodItemController extends Controller
     {
         $data = [];
         $data['good'] = Good::getInstance()->getById($get['id']);
-        $data['alreadyInCart'] = Cart::getInstance()->isAlreadyInCart($get['id']);
+        $data['isAlreadyInCart'] = !!Cart::getInstance()->productInCart($get['id']); // true, если уже в корзине
 
         $photos = [];
-        $rows = Picture::getInstance()->getByGoodId($get['id']);
+        $rows = Picture::getInstance()->getByProductId($get['id']);
         foreach ($rows as $row) {
             $photos[] = [
                 'id' => $row['id'],

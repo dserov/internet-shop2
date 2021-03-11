@@ -20,11 +20,11 @@
 <span class="cena_tovara clearfix"><strong>Всего за</strong> - <span
         class="summa">{{content_data.good.price}}</span></span>
 {% if not user.id %}
-<button class="btn_kupit" onclick="window.location.href='?page=auth'">Авторизоваться</button>
+<button class="btn_kupit" onclick="window.location.href='?path=auth'">Авторизоваться</button>
 Для покупок необходима авторизация
 {% else %}
 <button class="btn_kupit" id="btn-to-cart" data-product-id="{{content_data.good.id}}">В корзину</button>
-    {% if content_data.alreadyInCart %}
+    {% if content_data.isAlreadyInCart %}
         Товар уже есть в корзине!
     {% endif %}
 {% endif %}
@@ -44,13 +44,15 @@
         $(document).on('click', '#btn-to-cart', function (e) {
             let quantity = prompt("Сколько товара нужно?", "1");
             if (!quantity) return;
-            let data = {id_product: $(this).data('product-id'), quantity: parseInt(quantity)};
-            $.post("api.php/cart/add_good",
+            let data = {product_id: $(this).data('product-id'), product_quantity: parseInt(quantity)};
+            $.post("?path=cart/add_product",
                 JSON.stringify(data),
                 function (otvet, textStatus, jqXHR) {
-                    show_message('Сохранено', 'true');
+                    show_message('Товар добавлен в корзину', 'true');
                     // перегрузим страницу
-                    window.location.reload();
+                    setTimeout(function () {
+                        window.location.reload();
+                    }, 1000);
                 });
         })
     });
