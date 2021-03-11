@@ -22,6 +22,7 @@ class CartController extends Controller
 
     public function update($get=[]) {
         try {
+            $_GET['asAjax'] = 1;
             if ($_SERVER['REQUEST_METHOD'] != 'POST') {
                 throw new Exception('Ошибка метода');
             }
@@ -29,7 +30,6 @@ class CartController extends Controller
                 throw new Exception('Не авторизован');
             }
 
-            $_GET['asAjax'] = 1;
 
             $json_data = file_get_contents("php://input");
             $data = json_decode($json_data, true);
@@ -43,6 +43,7 @@ class CartController extends Controller
     public function delete($get = [])
     {
         try {
+            $_GET['asAjax'] = 1;
             if ($_SERVER['REQUEST_METHOD'] != 'POST') {
                 throw new Exception('Не верный метод');
             }
@@ -51,7 +52,6 @@ class CartController extends Controller
                 throw new Exception('Не авторизован');
             }
 
-            $_GET['asAjax'] = 1;
 
             $json_data = file_get_contents("php://input");
             $data = json_decode($json_data, true);
@@ -65,16 +65,16 @@ class CartController extends Controller
     public function add_product($get = [])
     {
         try {
+            $_GET['asAjax'] = 1;
             if ($_SERVER['REQUEST_METHOD'] != 'POST') {
                 throw new Exception('Не верный метод');
             }
 
-            if (!App::isAuthorized()) {
-                throw new Exception('Не авторизован');
+            if (!App::isUser()) {
+                throw new Exception('Корзина доступна только юзеру');
                 // авторизован юзер, перекинем на главную
             }
 
-            $_GET['asAjax'] = 1;
 
             $json_data = file_get_contents("php://input");
             $data = json_decode($json_data, true);

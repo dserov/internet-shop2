@@ -12,23 +12,28 @@
 </nav>
 <h1>{{content_data.good.name}}</h1>
 <h3 class="karto4ka_tovara">Описание товара</h3>
-<a target="_blank" href="{{ content_data.gallery[0].full}}" title="Открыть полную картинку">
-    <img src="{{ content_data.gallery[0].thumb}}" alt="10&quot; Ноутбук 4Good Cl100 синий"
-         class="karto4ka_tovara_img_thumb">
-</a>
-<p class="karto4ka_tovara_desc_short karto4ka_tovara">{{content_data.good.description_short | escape}}</p>
-<span class="cena_tovara clearfix"><strong>Всего за</strong> - <span
-        class="summa">{{content_data.good.price}}</span></span>
-{% if not user.id %}
-<button class="btn_kupit" onclick="window.location.href='?path=auth'">Авторизоваться</button>
-Для покупок необходима авторизация
-{% else %}
-<button class="btn_kupit" id="btn-to-cart" data-product-id="{{content_data.good.id}}">В корзину</button>
-    {% if content_data.isAlreadyInCart %}
-        Товар уже есть в корзине!
-    {% endif %}
-{% endif %}
-<div class="clearfix"></div>
+<div class="tovar">
+    <a target="_blank" href="{{ content_data.gallery[0].full}}" title="Открыть полную картинку">
+        <img src="{{ content_data.gallery[0].thumb}}" alt="10&quot; Ноутбук 4Good Cl100 синий"
+             class="karto4ka_tovara_img_thumb">
+    </a>
+    <div class="tovar__body">
+        <p class="karto4ka_tovara_desc_short karto4ka_tovara">{{content_data.good.description_short | escape}}</p>
+        <span class="cena_tovara clearfix"><strong>Всего за</strong> - <span
+                class="summa">{{content_data.good.price}}</span></span>
+        {% if user.is_admin == '0' %}
+            {% if not user.id %}
+                <button class="btn_kupit" onclick="window.location.href='?path=auth'">Авторизоваться</button>
+                Для покупок необходима авторизация
+            {% else %}
+                <button class="btn_kupit" id="btn-to-cart" data-product-id="{{content_data.good.id}}">В корзину</button>
+                    {% if content_data.isAlreadyInCart %}
+                        Товар уже есть в корзине!
+                    {% endif %}
+            {% endif %}
+        {% endif %}
+    </div>
+</div>
 <h3 class="karto4ka_tovara">Фотогалерея</h3>
 {% for thumb in content_data.gallery %}
     <a class="gallery-link" data-fancybox="gallery" href="{{thumb.full}}">

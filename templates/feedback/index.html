@@ -1,60 +1,70 @@
 {% include 'header.html' %}
-<span class="error"><?= implode('<br>', $errors) ?></span>
+
+{% for error in content_data.errors %}
+    <span class="error">{{error}}</span>
+{% endfor %}
+
 <h1>Отзывы</h1>
 <table class="tbl_harakteristiki">
     <tr>
         <th>Автор</th>
         <th>Содержимое</th>
         <th>Добавлен</th>
-        <?php if (isAdmin()) { ?>
+        {% if user.is_admin == '1' %}
         <th>Действия</th>
-        <?php } ?>
+        {% endif %}
     </tr>
-    <?php if (!$rows) {
-        echo "<tr><td colspan='3'>Отзывов пока нет!</td></tr>";
-    } else {
-    foreach ($rows as $row) {
-    ?>
-    <tr>
-        <td><?= $row['author'] ?></td>
-        <td><?= $row['text'] ?></td>
-        <td><?= $row['create_date'] ?></td>
-        <?php if (isAdmin()) { ?>
-        <td class="feedback-actions__panel">
-            <form action="?page=feedback" method="post"><input type="hidden" name="id"
-                                                               value="<?= $row['id'] ?>">
-                <button type="submit" name="action" value="delete" title="Удалить отзыв">Удалить</button>&nbsp;
-            </form>
-            <form action="?page=feedback" method="post"><input type="hidden" name="id"
-                                                               value="<?= $row['id'] ?>">
-                <button type="submit" name="action" value="edit" title="Изменить отзыв">Изменить</button>&nbsp;
-            </form>
-        </td>
-        <?php } ?>
-    </tr>
-    <?php
-        }
-    } ?>
+    {% if content_data.reviews is empty %}
+        {% if user.is_admin == '1' %}
+            <tr><td colspan='4'>Отзывов пока нет!</td></tr>
+        {% else %}
+            <tr><td colspan='3'>Отзывов пока нет!</td></tr>
+        {% endif %}
+    {% else %}
+        {% for review in content_data.reviews %}
+            <tr>
+                <td>{{review.author}}</td>
+                <td>{{review.text}}</td>
+                <td>{{review.create_date}}</td>
+                {% if user.is_admin == '1' %}
+                    <td class="feedback-actions__panel">
+                        <form action="?path=feedback" method="post"><input type="hidden" name="id"
+                                                                           value="{{review.id}}">
+                            <button type="submit" name="action" value="delete" title="Удалить отзыв">Удалить</button>&nbsp;
+                        </form>
+                        <form action="?path=feedback" method="post"><input type="hidden" name="id"
+                                                                           value="{{review.id}}">
+                            <button type="submit" name="action" value="edit" title="Изменить отзыв">Изменить</button>&nbsp;
+                        </form>
+                    </td>
+                {% endif %}
+            </tr>
+        {% endfor %}
+    {% endif %}
 </table>
 <hr>
-<?php if ($feedback['action'] == 'edit') { ?>
+{% if content_data.review.action == 'edit' %}
 <h2>Редактировать отзыв</h2>
-<?php } else { ?>
+{% else %}
 <h2>Новый отзыв</h2>
-<?php } ?>
-<form action="?page=feedback" method="post">
-    <input type="hidden" name="id" value="<?= $feedback['id'] ?>">
-    <div class="input_field"><span>Имя: </span><input type="text" name="author" value="<?= $feedback['author'] ?>"
-                                                      required placeholder="Введите имя"></div>
-    <div class="input_field"><span>Отзыв: </span><textarea name="text" required
-                                                           placeholder="Ваш отзыв"><?= $feedback['text'] ?></textarea>
+{% endif %}
+<form action="?path=feedback" method="post">
+    <input type="hidden" name="id" value="{{content_data.review.id}}">
+    <div class="input_field">
+        <span>Имя: </span>
+        <input type="text" name="author" value="{{content_data.review.author|escape}}" required placeholder="Введите имя">
+    </div>
+    <div class="input_field">
+        <span>Отзыв: </span>
+        <textarea name="text" required placeholder="Ваш отзыв">{{content_data.review.text|escape}}</textarea>
     </div>
     <div class="input_field"><span>&nbsp;</span>
-        <?php if ($feedback['action'] == 'edit') { ?>
-        <button type="submit" name="action" value="update">Обновить отзыв</button>
-        <?php } else { ?>
-        <button type="submit" name="action" value="add">Добавить отзыв</button>
-        <?php } ?>
+        {% if content_data.review.action == 'edit' %}
+            <button type="submit" name="action" value="update">Обновить отзыв</button>
+        {% else %}
+            <button type="submit" name="action" value="add">Добавить отзыв</button>
+        {% endif %}
     </div>
 </form>
+
 {% include 'footer.html' %}

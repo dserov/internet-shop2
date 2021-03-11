@@ -37,8 +37,8 @@ class DB
             if (defined('SQL_QUERY_LOG')) {
                 $line = $query;
                 $line = str_replace('%', '%%', $line); // hack
-                $query_log = vsprintf(str_replace('?', "%s", $line), array_map("DBEscapeString", $args));
-                echo $query_log;
+                $query_log = vsprintf(str_replace('?', "%s", $line), array_map([$this, "EscapeString"], $args));
+                echo $query_log . '<br>';
             }
             if (!($rs = $this->getInstance()->DBLink->prepare($query))) {
                 throw new Exception('Ошибка prepare');

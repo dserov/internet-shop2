@@ -125,7 +125,6 @@ h3.karto4ka_tovara {
 }
 
 .karto4ka_tovara_img_thumb {
-    float: left;
     margin: 0 20px 10px 20px;
     width: 150px;
     background-color: #484343;
@@ -135,6 +134,10 @@ h3.karto4ka_tovara {
 
 .karto4ka_tovara_img_thumb:hover {
     background-color: white;
+}
+
+.tovar {
+    display: flex;
 }
 
 table.tbl_harakteristiki {
@@ -182,6 +185,7 @@ table.tbl_harakteristiki td, table.tbl_harakteristiki th {
 .tovar_list {
     padding: 0;
     list-style-type: none;
+    flex-flow: wrap
 }
 
 .tovar_list > div {
@@ -197,7 +201,7 @@ table.tbl_harakteristiki td, table.tbl_harakteristiki th {
 }
 
 .card {
-    width: 18rem;
+    width: 14rem;
 }
 
 /* Контакты */
@@ -290,6 +294,21 @@ input[type=reset] {
 .photo-gallery {
     display: flex;
     flex-flow: wrap row;
+}
+
+.photo-wrapper {
+    margin: 10px;
+    box-shadow: 0 0 10px rgb(0 0 0 / 50%);
+    transition: all .2s ease-in-out;
+    padding: 10px;
+}
+
+.photo-wrapper:hover {
+    transform: scale(1.05);
+}
+
+.photo-delete {
+    color: darkred;
 }
 
 .reviews-table {
@@ -484,7 +503,7 @@ input[type=reset] {
     }
 
     .card {
-        width: 18rem;
+        width: 14rem;
         flex-direction: column;
     }
 }

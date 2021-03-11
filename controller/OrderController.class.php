@@ -25,6 +25,7 @@ class OrderController extends Controller
     public function get()
     {
         try {
+            $_GET['asAjax'] = 1;
             if ($_SERVER['REQUEST_METHOD'] != 'POST') {
                 return [];
             }
@@ -33,7 +34,6 @@ class OrderController extends Controller
                 throw new Exception('Не авторизован');
             }
 
-            $_GET['asAjax'] = 1;
 
             $json_data = file_get_contents("php://input");
             $data = json_decode($json_data, true);
@@ -50,6 +50,7 @@ class OrderController extends Controller
     public function update()
     {
         try {
+            $_GET['asAjax'] = 1;
             if ($_SERVER['REQUEST_METHOD'] != 'POST') {
                 return [];
             }
@@ -58,7 +59,6 @@ class OrderController extends Controller
                 throw new Exception('Не авторизован');
             }
 
-            $_GET['asAjax'] = 1;
 
             $json_data = file_get_contents("php://input");
             $data = json_decode($json_data, true);
@@ -74,6 +74,7 @@ class OrderController extends Controller
     public function create_from_cart($get = [])
     {
         try {
+            $_GET['asAjax'] = 1;
             if ($_SERVER['REQUEST_METHOD'] != 'POST') {
                 throw new Exception('Не верный метод');
             }
@@ -82,7 +83,6 @@ class OrderController extends Controller
                 throw new Exception('Не авторизован');
             }
 
-            $_GET['asAjax'] = 1;
 
             // Корзина текущего пользователя со скидками
             // и одновременным отфильтровыванием отсутствующих товаров
@@ -137,6 +137,7 @@ class OrderController extends Controller
      */
     public function cancel() {
         try {
+            $_GET['asAjax'] = 1;
             if ($_SERVER['REQUEST_METHOD'] != 'POST') {
                 return [];
             }
@@ -145,7 +146,6 @@ class OrderController extends Controller
                 throw new Exception('Не авторизован');
             }
 
-            $_GET['asAjax'] = 1;
 
             $json_data = file_get_contents("php://input");
             $data = json_decode($json_data, true);

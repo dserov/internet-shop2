@@ -270,6 +270,7 @@ abstract class Model {
         $describe_table = DB::getInstance()->QueryMany("DESCRIBE " . static::$table . ";");
         foreach ($describe_table as $row) {
             if ($row['Field'] === 'id') continue;
+            if ($row['Default'] === 'current_timestamp()') continue;
             $default[$row['Field']] = (($row['Default'] != '') ? $row['Default'] : '');
         }
     }

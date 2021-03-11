@@ -25,7 +25,7 @@ class Picture extends Model
      * @throws Exception
      */
     public function getByProductId($id) {
-        return DB::getInstance()->QueryMany("SELECT * FROM " . static::$table . " WHERE product_id=? ORDER BY product_id, id desc", $id);
+        return DB::getInstance()->QueryMany("SELECT * FROM " . static::$table . " WHERE product_id=? ORDER BY product_id, id", $id);
     }
 
 }

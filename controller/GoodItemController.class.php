@@ -19,9 +19,17 @@ class GoodItemController extends Controller
         $data = [];
         $data['good'] = Good::getInstance()->getById($get['id']);
         $data['isAlreadyInCart'] = !!Cart::getInstance()->productInCart($get['id']); // true, если уже в корзине
+        $data['gallery'] = $this->getGallery($get['id']);
 
+        $this->title = $data['good']['name'];
+
+        return $data;
+    }
+
+    protected function getGallery($product_id)
+    {
         $photos = [];
-        $rows = Picture::getInstance()->getByProductId($get['id']);
+        $rows = Picture::getInstance()->getByProductId($product_id);
         foreach ($rows as $row) {
             $photos[] = [
                 'id' => $row['id'],
@@ -32,13 +40,6 @@ class GoodItemController extends Controller
                 'height' => THUMBNAIL_HEIGHT
             ];
         }
-
-        $data['gallery'] = $photos;
-
-        $this->title = $data['good']['name'];
-
-        return $data;
+        return $photos;
     }
-
-
 }

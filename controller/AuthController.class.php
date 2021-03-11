@@ -36,6 +36,7 @@ class AuthController extends Controller
     public function register($get = [])
     {
         try {
+            $_GET['asAjax'] = 1;
             if ($_SERVER['REQUEST_METHOD'] != 'POST') {
                 return [];
             }
@@ -44,7 +45,6 @@ class AuthController extends Controller
                 throw new Exception('Не авторизован');
             }
 
-            $_GET['asAjax'] = 1;
 
             $json_data = file_get_contents("php://input");
             $data = json_decode($json_data, true);

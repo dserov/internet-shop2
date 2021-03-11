@@ -30,7 +30,9 @@
         <td title="{{ order.description }}">{{order.status_name}}</td>
         <td>
             <button class="show-order-detail" data-order-id="{{order.id}}">Состав заказа</button>
-            <button class="cancel-order" data-order-id="{{order.id}}"><i class="fas fa-ban" style="color: darkred"></i> Отменить заказ</button>
+            {% if order.status_id == 1 %}
+                <button class="cancel-order" data-order-id="{{order.id}}"><i class="fas fa-ban" style="color: darkred"></i> Отменить заказ</button>
+            {% endif %}
         </td>
     </tr>
     {% endfor %}

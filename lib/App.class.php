@@ -71,8 +71,6 @@ class App
             'page' => $_GET['page']
         ];
 
-//        $data['logi'] = print_r($data['content_data']['thumbnails'], true);
-
         if (isset($_GET['asAjax'])) {
             $result_code = (isset($data['content_data']['error'])) ? 400 : 200;
             Http::response($result_code, $data['content_data']);

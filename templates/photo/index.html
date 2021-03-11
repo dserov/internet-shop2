@@ -1,0 +1,71 @@
+{% include 'header.html' %}
+
+<h1>Фотогалерея продукта</h1>
+<h3><a href="?path=good_item/{{content_data.product.id}}">{{content_data.product.name | escape}}</a></h3>
+<div class="clearfix"></div>
+*Первая картинка станет главным изображением товара
+<div class="photo-gallery">
+    {% for thumb in content_data.gallery %}
+    <div class="photo-wrapper">
+        <a class="gallery-link" data-fancybox="gallery" href="{{thumb.full}}">
+            <img class="gallery-img" src="{{thumb.thumb}}" width="{{thumb.width}}" height="{{thumb.height}}"
+                 alt="{{thumb.alt}}">
+            <p>Размер: {{thumb.size}}</p>
+        </a>
+        <a href="#" data-picture-id="{{thumb.id}}" class="photo-delete" title="Удалить картинку">Удалить</a>
+    </div>
+    {% endfor %}
+</div>
+<div class="error-list">
+    {% for error in content_data.errors %}
+    <div>{{error}}</div>
+    {% endfor %}
+</div>
+<form id="upload_photo" method="post" action="#" enctype="multipart/form-data">
+    <h2>Загрузка новой картинки</h2>
+    <input type="hidden" name="product_id" value="{{content_data.product.id}}">
+    <input type="file" name="file-upload" id="file-upload" required/>
+    <button type="submit">Загрузить</button>
+</form>
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        $(document).on('click', '.photo-delete', function (e) {
+            e.preventDefault();
+            if (!confirm("Удалить картинку? Уверены?")) {
+                return;
+            }
+            let data = {picture_id: $(this).data('picture-id')};
+            $.post("?path=photo/delete",
+                JSON.stringify(data),
+                function (otvet, textStatus, jqXHR) {
+                    show_message('Удалено', 'true');
+                    // перегрузим страницу
+                    setTimeout(function () {
+                        window.location.reload();
+                    }, 1000);
+                });
+        });
+
+        $('#upload_photo').submit(function (e) {
+            e.preventDefault();
+            let formData = new FormData(this);
+            $.ajax({
+                url: '?path=photo/upload',
+                data: formData,
+                type: 'POST',
+                contentType: false, // NEEDED, DON'T OMIT THIS (requires jQuery 1.6+)
+                processData: false, // NEEDED, DON'T OMIT THIS
+                success: function (otvet, textStatus, jqXHR) {
+                    show_message('Загружено', 'true');
+                    // перегрузим страницу
+                    setTimeout(function () {
+                        window.location.reload();
+                    }, 1000);
+                }
+            });
+        });
+    });
+</script>
+
+{% include 'footer.html' %}

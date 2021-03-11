@@ -8,6 +8,7 @@
 
 class GoodsController extends Controller
 {
+    protected $errors = [];
     public function __construct()
     {
         $this->title = 'Управление товарами';
@@ -28,27 +29,25 @@ class GoodsController extends Controller
         }
 
         if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-            $data['errors'][] = $this->doGoodsItemAction($data['good_item']);
+            $this->doGoodsItemAction($data['good_item']);
         }
 
-
-// вывод уже имеющихся записей
         try {
             $rows = Good::getInstance()->getAll();
             $data['goods'] = $rows;
         } catch (Exception $e) {
             $data['errors'][] = $e->getMessage();
         }
+        $data['errors'] = $this->errors;
         return $data;
     }
 
-    // дальше для админа
-
-
-    public function doGoodsItemAction(&$goods_item)
+    /**
+     * @param $goods_item
+     */
+    protected function doGoodsItemAction(&$goods_item)
     {
         try {
-            $error = '';
             $goods_item['action'] = isset($_POST['action']) ? $_POST['action'] : '';
             $goods_item['id'] = isset($_POST['id']) ? $_POST['id'] : null;
             $goods_item['name'] = isset($_POST['name']) ? $_POST['name'] : null;
@@ -58,25 +57,25 @@ class GoodsController extends Controller
             $goods_item['price'] = isset($_POST['price']) ? $_POST['price'] : null;
 
             if ($goods_item['action'] == 'add') {
-// add new goods_item
-                Good::getInstance()->add($goods_item);
-                if (!$error) {
-// сделаем редирект, чтоб не добавить еще один товар при простом обновлении страницы
+                // add new goods_item
+                Good::getInstance()->save($goods_item, $this->errors);
+                if (!$this->errors) {
+                    // сделаем редирект, чтоб не добавить еще один товар при простом обновлении страницы
                     header("Location: " . $_SERVER['REQUEST_URI']);
                     exit;
                 }
-                return '';
+                return;
             }
 
             if ($goods_item['action'] == 'delete') {
-                Good::getInstance()->delete($goods_item);
+                Good::getInstance()->deleteById($goods_item['id']);
             }
             if ($goods_item['action'] == 'update') {
-                Good::getInstance()->update($goods_item);
+                Good::getInstance()->save($goods_item);
                 $goods_item = [];
             }
 
-// переход в режим редактирования
+            // переход в режим редактирования
             if ($goods_item['action'] == 'edit') {
                 $goods_item = Good::getInstance()->getById($goods_item['id']);
                 if (!$goods_item)
@@ -84,9 +83,7 @@ class GoodsController extends Controller
                 $goods_item['action'] = 'edit';
             }
         } catch (Exception $e) {
-            $error = $e->getMessage();
+            $this->errors[] = $e->getMessage();
         }
-
-        return $error;
     }
 }
