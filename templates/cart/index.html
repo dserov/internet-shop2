@@ -1,0 +1,117 @@
+{% include 'header.html' %}
+
+<h1>Корзина</h1>
+
+<div id="cart-message" class="cart-message">
+    <h3>Ваша заявка принята!</h3>
+    <p>Ожидайте звонка менеджера для подтвержения.</p>
+    <p>Ваши заявки и их статус отображаются в <a href="?path=personal_area">личном кабинете</a>.</p>
+    <p>Также проверьте адрес доставки.</p>
+    <p>Спасибо, что доверяете нам!</p>
+</div>
+{% if goods_in_cart is empty %}
+<strong>Ваша корзина пуста</strong><br><br>
+Не&nbsp;теряйте времени, наш <a href="?path=catalog">каталог товаров</a> ждет Вас!</p>
+{% else %}
+<form id="create-order" action="tra-la-la">
+    <table class="tbl_harakteristiki" id="cart-table">
+        <thead>
+        <tr>
+            <th>Наименование</th>
+            <th>Количество</th>
+            <th>Стоимость</th>
+            <th>Скидка</th>
+            <th>Стоимость с учетом скидки</th>
+            <th>Всего</th>
+            <th>&nbsp;</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% set total = 0 %}
+        {% for good in goods_in_cart %}
+        <tr data-cart-id="{{ good.id}}">
+            <td>{{good.name}}</td>
+            <td><input type="text" value="{{good.quantity}}" name="quantity" class="cart-quantity"/></td>
+            <td><span class="cart-price">{{good.price}}</span></td>
+            <td><span class="cart-discount">{{good.discount}}</span></td>
+            <td><span class="cart-itogo">{{good.itogo}}</span></td>
+            <td><span class="cart-vsego">{{good.vsego}}</span></td>
+            <td>
+                <button class="btn-delete-good"
+                        title="Удалить товар из корзины">Удалить
+                </button>
+            </td>
+        </tr>
+        {% set total = total + good.vsego %}
+        {% endfor %}
+        </tbody>
+    </table>
+    <p>Общая сумма: <span class="cart-total">{{ total }}</span></p>
+    <br>
+    <button type="submit">Создать заказ</button>
+</form>
+{% endif %}
+
+<script type="text/javascript">
+    $(document).ready(function (e) {
+        $(document).on("click", ".btn-delete-good", function (e) {
+            e.preventDefault();
+            if (!confirm("Удалить товар?")) return;
+            let $tr = $(this).closest('tr');
+            let data = {id: $tr.data('cart-id')};
+            $.post("?path=cart/delete",
+                JSON.stringify(data),
+                function (otvet, textStatus, jqXHR) {
+                    show_message('Удалено', 'true');
+                    // перегрузим страницу
+                    setTimeout(() => window.location.reload(), 1000);
+                }
+            );
+        });
+        let options = {
+            minValue: 1,
+            updateHandler: function () {
+                let $tr = this.closest('tr');
+                let data = {id: $tr.data('cart-id'), quantity: parseInt(this.val())}; // флаг установки(!) количества
+                let posting = $.post("?path=cart/update",
+                    JSON.stringify(data),
+                    function (otvet, textStatus, jqXHR) {
+                        // пересчет строк таблицы
+                        recalcCart();
+                    }
+                );
+                posting.fail(function () {
+                    setTimeout(() => window.location.reload(), 1000);
+                });
+            }
+        };
+        makeSpinner('input.cart-quantity', options);
+
+        $(document).on("submit", "#create-order", function (e) {
+            e.preventDefault();
+            if (!confirm("Создать заказ?")) return;
+            $.post("?path=order/create_from_cart",
+                JSON.stringify({}),
+                function (otvet, textStatus, jqXHR) {
+                    $('#create-order').fadeOut();
+                    $('.cart-message').fadeIn();
+                }
+            );
+        });
+    });
+
+    function recalcCart() {
+        let $trList = $('#cart-table').find('tbody > tr');
+        let totalSumma = 0;
+        $.each($trList, function (idx, tr) {
+            itogo = parseFloat($(tr).find('.cart-itogo').text());
+            quantity = parseInt($(tr).find('.cart-quantity').val());
+            $(tr).find('.cart-vsego').text((itogo * quantity).toFixed(2));
+            totalSumma += itogo * quantity;
+        });
+        $('.cart-total').text(totalSumma.toFixed(2));
+    }
+
+</script>
+
+{% include 'footer.html' %}

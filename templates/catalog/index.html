@@ -1,0 +1,19 @@
+{% include 'header.html' %}
+
+<h1>Каталог</h1>
+<div class="tovar_list clearfix d-md-flex">
+    {% for product in content_data.goods %}
+    <div class="card">
+        <a href="?path=good_item/{{product.id}}">
+        <img class="card-img-top mt-3 mb-sm-3" src="{{ content_data.thumbnails[product.id].picture_path}}" alt="{{ product.name | escape }}" width="128" height="128">
+        <div class="card-body">
+            <h5 class="card-title">{{ product.name | escape }}</h5>
+            <p>Цена: {{product.price}}</p>
+            <a href="?path=good_item/{{product.id}}" class="btn btn-primary">Подробнее</a>
+        </div>
+        </a>
+    </div>
+    {% endfor %}
+</div>
+
+{% include 'footer.html' %}

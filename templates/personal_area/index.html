@@ -1,0 +1,118 @@
+{% include 'header.html' %}
+<h1>Личный кабинет</h1>
+
+<p>Приветствую вас, {{ user.fio }}!</p>
+<p>Ваш логин в системе - {{ user.login }}</p>
+
+<p>Вы можете <a href="?path=auth/logout" title="Выйти из системы">выйти</a></p>
+
+<h2>Ваши заказы</h2>
+
+{% if content_data.orders is empty %}
+<strong>Заказов пока нет... Не теряйте времени, <a href="?path=catalog">заказывайте!</a></strong>
+{% else %}
+<table class="tbl_harakteristiki" id="user-orders-table">
+    <thead>
+    <tr>
+        <th>Номер</th>
+        <th>Дата-время</th>
+        <th>Сумма</th>
+        <th>Статус</th>
+        <th>&nbsp;</th>
+    </tr>
+    </thead>
+    <tbody>
+    {% for order in content_data.orders %}
+    <tr>
+        <td>{{order.id}}</td>
+        <td>{{order.order_date}}</td>
+        <td>{{order.vsego}}</td>
+        <td title="{{ order.description }}">{{order.status_name}}</td>
+        <td>
+            <button class="show-order-detail" data-order-id="{{order.id}}">Состав заказа</button>
+            {% if order.status_id == 1 %}
+                <button class="cancel-order" data-order-id="{{order.id}}"><i class="fas fa-ban" style="color: darkred"></i> Отменить заказ</button>
+            {% endif %}
+        </td>
+    </tr>
+    {% endfor %}
+    </tbody>
+</table>
+{% endif %}
+
+<!-- Modal -->
+<div id="order-detail" class="modal hide fade" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Состав заказа</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <table class="tbl_harakteristiki" id="order-detail-table">
+                    <thead>
+                    <tr>
+                        <th>Наименование</th>
+                        <th>Количество</th>
+                        <th>Стоимость</th>
+                        <th>Скидка</th>
+                        <th>Стоимость с учетом скидки</th>
+                        <th>Всего</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+    $(document).ready(function (e) {
+        $(document).on('click', '.show-order-detail', function (e) {
+            let order_id = parseInt($(this).data('order-id'));
+            $.post("?path=order/get",
+                JSON.stringify({ 'order_id' : order_id }),
+                function (otvet, textStatus, jqXHR) {
+                    // очистить старые строки
+                    let $tbody = $('#order-detail-table > tbody');
+                    $tbody.find('tr').remove();
+                    // есть ли данные?
+                    if (!otvet.data || !otvet.data.detail) {
+                        show_message('Детали заказа не получены! :(', 'false');
+                        return;
+                    }
+                    // рендеринг новых строк с помощью шаблона https://github.com/blueimp/JavaScript-Templates
+                    for (let key in otvet.data.detail) {
+                        let row = otvet.data.detail[key];
+                        let render = `<tr>
+                                        <td>${row.name}</td>
+                                        <td>${row.quantity}</td>
+                                        <td>${row.price}</td>
+                                        <td>${row.discount}</td>
+                                        <td>${row.itogo}</td>
+                                        <td>${row.vsego}</td>
+                                        </tr>`;
+                        $tbody.append(render);
+                    }
+                    // смотрим красоту
+                    $('#order-detail').modal();
+                }
+            );
+        });
+        $(document).on('click', '.cancel-order', function (e) {
+            let order_id = parseInt($(this).data('order-id'));
+            $.post("?path=order/cancel",
+                JSON.stringify({ 'id' : order_id }),
+                function (otvet, textStatus, jqXHR) {
+                    show_message('Заказ отменен', 'true');
+                    setTimeout(() => window.location.reload(), 1000);
+                }
+            );
+        })
+    })
+</script>
+{% include 'footer.html' %}
